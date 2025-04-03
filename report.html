@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend's Report - TailTalks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/custom.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .report-bg {
+            background-image: url('https://images.pexels.com/photos/2607544/pexels-photo-2607544.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+        .report-card {
+            background: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body class="font-['Poppins']">
+    <div class="report-bg min-h-screen p-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="report-card rounded-xl p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <h1 id="reportTitle" class="text-3xl font-bold text-gray-800 mb-2">Friend's Report <span class="text-2xl">📋</span></h1>
+                    <p class="text-gray-600">Here's our analysis and recommendations</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-blue-800 mb-2 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                Identified Issues
+                            </h3>
+                            <ul id="issuesList" class="list-disc pl-5 space-y-1 text-gray-700">
+                                <!-- Dynamically populated -->
+                            </ul>
+                        </div>
+
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-yellow-800 mb-2 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01"></path>
+                                </svg>
+                                Precautions
+                            </h3>
+                            <ul id="precautionsList" class="list-disc pl-5 space-y-1 text-gray-700">
+                                <!-- Dynamically populated -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="text-xl font-bold text-purple-800 mb-4 flex items-center">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                                </svg>
+                                💊 Medication Recommendations
+                            </h3>
+                            <div class="bg-white p-4 rounded-md shadow-sm">
+                                <ul id="medicationsList" class="space-y-3">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                            <p class="text-sm text-purple-600 mt-3 italic">Always consult your veterinarian before administering any medication</p>
+                        </div>
+
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-green-800 mb-2 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                                </svg>
+                                Home Remedies
+                            </h3>
+                            <ul id="remediesList" class="list-disc pl-5 space-y-1 text-gray-700">
+                                <!-- Dynamically populated -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="findVetsBtn" class="btn-primary flex-1 flex items-center justify-center py-3">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Find Vets Near Me
+                    </button>
+                    <button id="feedbackBtn" class="btn-secondary flex-1 flex items-center justify-center py-3">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                        Provide Feedback
+                    </button>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button id="backBtn" class="btn-secondary inline-flex items-center px-6 py-2">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back to Description
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/app.js"></script>
+    <script src="scripts/imageAnalysis.js"></script>
+</body>
+</html>
