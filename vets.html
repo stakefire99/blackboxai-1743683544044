@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Vets - TailTalks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/custom.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .vets-bg {
+            background-image: url('https://images.pexels.com/photos/4587993/pexels-photo-4587993.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+        .vet-card {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="font-['Poppins']">
+    <div class="vets-bg min-h-screen p-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="vet-card rounded-xl p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Veterinarians Nearby <span class="text-2xl">🏥</span></h1>
+                    <p class="text-gray-600">Finding accredited veterinary clinics near you</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div id="map" class="w-full h-96 rounded-lg overflow-hidden shadow-md"></div>
+                    </div>
+                    <div>
+                        <div class="bg-white p-4 rounded-lg shadow-md h-96 overflow-y-auto">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-800">Nearby Veterinary Clinics</h2>
+                            <div id="vetList" class="space-y-4">
+                                <div class="text-center py-8">
+                                    <svg class="w-12 h-12 mx-auto text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    <p class="mt-4 text-gray-600">Finding clinics in your area...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="report.html" class="btn-secondary inline-flex items-center px-6 py-2">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back to Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple location-based vet finder -->
+    <script>
+        function findVets() {
+            const vetList = document.getElementById('vetList');
+            vetList.innerHTML = `
+                <div class="text-center py-8">
+                    <svg class="w-12 h-12 mx-auto text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <p class="mt-4 text-gray-600">Finding veterinary clinics near you...</p>
+                </div>
+            `;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        vetList.innerHTML = `
+                            <div class="text-center p-6">
+                                <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <h3 class="text-xl font-semibold mt-4">Veterinary Clinics Found</h3>
+                                <p class="text-gray-600 mt-2">We've located clinics near you</p>
+                                <div class="mt-6 space-y-4">
+                                    <a href="https://www.google.com/maps/search/veterinary+clinics/@${lat},${lng},15z" 
+                                       target="_blank" class="btn-primary inline-flex items-center justify-center w-full py-3">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                        </svg>
+                                        View on Google Maps
+                                    </a>
+                                    <button onclick="shareLocation(${lat}, ${lng})" 
+                                            class="btn-secondary inline-flex items-center justify-center w-full py-3">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                        </svg>
+                                        Share Location
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    },
+                    error => {
+                        vetList.innerHTML = `
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <p class="mt-4 text-gray-600">Could not access your location</p>
+                                <p class="text-sm text-gray-500 mt-2">Please enable location services</p>
+                                <a href="https://www.google.com/maps/search/veterinary+clinics" 
+                                   target="_blank" class="btn-primary mt-4 inline-flex items-center justify-center w-full py-3">
+                                    Search Google Maps
+                                </a>
+                            </div>
+                        `;
+                    }
+                );
+            } else {
+                vetList.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg class="w-12 h-12 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                        </svg>
+                        <p class="mt-4 text-gray-600">Geolocation not supported</p>
+                        <a href="https://www.google.com/maps/search/veterinary+clinics" 
+                           target="_blank" class="btn-primary mt-4 inline-flex items-center justify-center w-full py-3">
+                            Search Google Maps
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        function shareLocation(lat, lng) {
+            const url = `https://www.google.com/maps/search/veterinary+clinics/@${lat},${lng},15z`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Veterinary Clinics Near You',
+                    text: 'Here are veterinary clinics near my location',
+                    url: url
+                }).catch(err => {
+                    // Fallback to clipboard
+                    navigator.clipboard.writeText(url);
+                    alert('Link copied to clipboard!');
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('Link copied to clipboard!');
+            }
+        }
+
+        // Initialize when page loads
+        window.onload = findVets;
+    </script>
+    <script>
+        function initMap() {
+            const mapElement = document.getElementById("map");
+            
+            // Show loading state
+            mapElement.innerHTML = `
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center">
+                        <svg class="w-12 h-12 mx-auto text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <p class="mt-4 text-gray-600">Loading map...</p>
+                    </div>
+                </div>
+            `;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        try {
+                            const map = new google.maps.Map(mapElement, {
+                                center: userLocation,
+                                zoom: 14,
+                                styles: [
+                                    {
+                                        "featureType": "poi.medical",
+                                        "elementType": "labels.icon",
+                                        "stylers": [{"visibility": "on"}]
+                                    }
+                                ]
+                            });
+                            
+                            // Add user location marker
+                            new google.maps.Marker({
+                                position: userLocation,
+                                map: map,
+                                title: "Your Location",
+                                icon: {
+                                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                                }
+                            });
+                            
+                            // Find nearby veterinary clinics
+                            const service = new google.maps.places.PlacesService(map);
+                            service.nearbySearch({
+                                location: userLocation,
+                                radius: 5000,
+                                type: 'veterinary_care',
+                                rankBy: google.maps.places.RankBy.PROMINENCE
+                            }, (results, status) => {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    const vetList = document.getElementById('vetList');
+                                    vetList.innerHTML = '';
+                                    
+                                    results.slice(0, 10).forEach(place => {
+                                        // Add marker for each vet clinic
+                                        new google.maps.Marker({
+                                            position: place.geometry.location,
+                                            map: map,
+                                            title: place.name,
+                                            icon: {
+                                                url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                                            }
+                                        });
+                                        
+                                        // Create vet card
+                                        const card = document.createElement('div');
+                                        card.className = 'bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors';
+                                        card.innerHTML = `
+                                            <h3 class="font-bold text-lg">${place.name}</h3>
+                                            <p class="text-gray-600 text-sm mt-1">${place.vicinity || 'Address not available'}</p>
+                                            ${place.rating ? `<div class="flex items-center mt-2">
+                                                <span class="text-yellow-500">${'★'.repeat(Math.round(place.rating))}</span>
+                                                <span class="text-gray-500 ml-1">(${place.rating})</span>
+                                            </div>` : ''}
+                                            <div class="mt-3 flex gap-2">
+                                                <a href="https://www.google.com/maps/dir/?api=1&destination=${place.geometry.location.lat()},${place.geometry.location.lng()}" 
+                                                   target="_blank" class="btn-secondary text-sm inline-flex items-center px-3 py-1 flex-1 justify-center">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                                    </svg>
+                                                    Directions
+                                                </a>
+                                                <button onclick="shareVetLocation('${place.name}', ${place.geometry.location.lat()}, ${place.geometry.location.lng()})" 
+                                                        class="btn-primary text-sm inline-flex items-center px-3 py-1 flex-1 justify-center">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                                    </svg>
+                                                    Share
+                                                </button>
+                                            </div>
+                                        `;
+                                        vetList.appendChild(card);
+                                    });
+                                    
+                                    if (results.length === 0) {
+                                        vetList.innerHTML = `
+                                            <div class="text-center py-8">
+                                                <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                <p class="mt-4 text-gray-600">No veterinary clinics found nearby</p>
+                                                <p class="text-sm text-gray-500 mt-2">Try expanding your search radius</p>
+                                            </div>
+                                        `;
+                                    }
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Map initialization error:', error);
+                            mapElement.innerHTML = `
+                                <div class="flex items-center justify-center h-full">
+                                    <div class="text-center p-4">
+                                        <svg class="w-12 h-12 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                                        </svg>
+                                        <p class="mt-4 text-gray-600">Failed to load map</p>
+                                        <button onclick="initMap()" class="btn-primary mt-4">
+                                            Try Again
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    
+                    // Add user location marker
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: "Your Location",
+                        icon: {
+                            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                        }
+                    });
+                    
+                    // Find nearby veterinary clinics
+                    const service = new google.maps.places.PlacesService(map);
+                    service.nearbySearch({
+                        location: userLocation,
+                        radius: 5000,
+                        type: 'veterinary_care',
+                        rankBy: google.maps.places.RankBy.PROMINENCE
+                    }, (results, status) => {
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            const vetList = document.getElementById('vetList');
+                            vetList.innerHTML = '';
+                            
+                            results.slice(0, 10).forEach(place => {
+                                // Add marker for each vet clinic
+                                new google.maps.Marker({
+                                    position: place.geometry.location,
+                                    map: map,
+                                    title: place.name,
+                                    icon: {
+                                        url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                                    }
+                                });
+                                
+                                // Create vet card
+                                const card = document.createElement('div');
+                                card.className = 'bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors';
+                                card.innerHTML = `
+                                    <h3 class="font-bold text-lg">${place.name}</h3>
+                                    <p class="text-gray-600 text-sm mt-1">${place.vicinity || 'Address not available'}</p>
+                                    ${place.rating ? `<div class="flex items-center mt-2">
+                                        <span class="text-yellow-500">${'★'.repeat(Math.round(place.rating))}</span>
+                                        <span class="text-gray-500 ml-1">(${place.rating})</span>
+                                    </div>` : ''}
+                                    <div class="mt-3 flex gap-2">
+                                        <a href="https://www.google.com/maps/dir/?api=1&destination=${place.geometry.location.lat()},${place.geometry.location.lng()}" 
+                                           target="_blank" class="btn-secondary text-sm inline-flex items-center px-3 py-1 flex-1 justify-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                            </svg>
+                                            Directions
+                                        </a>
+                                        <button onclick="shareVetLocation('${place.name}', ${place.geometry.location.lat()}, ${place.geometry.location.lng()})" 
+                                                class="btn-primary text-sm inline-flex items-center px-3 py-1 flex-1 justify-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                            </svg>
+                                            Share
+                                        </button>
+                                    </div>
+                                `;
+                                vetList.appendChild(card);
+                            });
+                            
+                            if (results.length === 0) {
+                                vetList.innerHTML = `
+                                    <div class="text-center py-8">
+                                        <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <p class="mt-4 text-gray-600">No veterinary clinics found nearby</p>
+                                        <p class="text-sm text-gray-500 mt-2">Try expanding your search radius</p>
+                                    </div>
+                                `;
+                            }
+                        }
+                    });
+                }, () => {
+                    document.getElementById('vetList').innerHTML = `
+                        <div class="text-center py-8">
+                            <svg class="w-12 h-12 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="mt-4 text-gray-600">Could not access your location</p>
+                            <p class="text-sm text-gray-500 mt-2">Please enable location services</p>
+                        </div>
+                    `;
+                });
+            }
+        }
+        
+        // Share vet location function
+        function shareVetLocation(name, lat, lng) {
+            const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${encodeURIComponent(name)}`;
+            const text = `Found a vet clinic near you: ${name}\n\n${url}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Veterinary Clinic',
+                    text: text,
+                    url: url
+                }).catch(err => {
+                    console.log('Error sharing:', err);
+                    copyToClipboard(text);
+                });
+            } else {
+                copyToClipboard(text);
+                alert('Vet information copied to clipboard!');
+            }
+        }
+        
+        // Fallback copy to clipboard
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        window.onload = loadGoogleMaps;
+    </script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
