@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - TailTalks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/custom.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .feedback-bg {
+            background-image: url('https://images.pexels.com/photos/406014/pexels-photo-406014.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="font-['Poppins']">
+    <div class="feedback-bg min-h-screen flex items-center justify-center p-4">
+        <div class="glass-card rounded-xl p-8 max-w-md w-full shadow-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Your Feedback <span class="text-2xl">💬</span></h1>
+                <p class="text-gray-600">Help us improve TailTalks</p>
+            </div>
+            
+            <form id="feedbackForm" class="space-y-6">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">How would you rate your experience?</label>
+                    <div class="flex justify-center space-x-2">
+                        <input type="radio" name="rating" id="star1" value="1" class="hidden">
+                        <label for="star1" class="text-3xl cursor-pointer">☆</label>
+                        <input type="radio" name="rating" id="star2" value="2" class="hidden">
+                        <label for="star2" class="text-3xl cursor-pointer">☆</label>
+                        <input type="radio" name="rating" id="star3" value="3" class="hidden">
+                        <label for="star3" class="text-3xl cursor-pointer">☆</label>
+                        <input type="radio" name="rating" id="star4" value="4" class="hidden">
+                        <label for="star4" class="text-3xl cursor-pointer">☆</label>
+                        <input type="radio" name="rating" id="star5" value="5" class="hidden">
+                        <label for="star5" class="text-3xl cursor-pointer">☆</label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Comments (optional)</label>
+                    <textarea class="input-field h-40 min-h-[10rem] text-base w-full max-w-[600px] mx-auto" placeholder="What did you like or how can we improve?"></textarea>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="submit" class="btn-primary flex-1">
+                        Submit Feedback
+                    </button>
+                    <button type="button" id="skipFeedbackBtn" class="btn-secondary flex-1">
+                        Skip
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="scripts/app.js"></script>
+    <script>
+        // Star rating interaction
+        document.querySelectorAll('[name="rating"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const stars = document.querySelectorAll('[name="rating"] + label');
+                stars.forEach((star, index) => {
+                    if (index < this.value) {
+                        star.textContent = '★';
+                        star.classList.add('text-yellow-400');
+                    } else {
+                        star.textContent = '☆';
+                        star.classList.remove('text-yellow-400');
+                    }
+                });
+            });
+        });
+
+        // Form submission
+        document.getElementById('feedbackForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Hide form and show thank you message
+            const formContainer = document.querySelector('.glass-card');
+            formContainer.innerHTML = `
+                <div class="text-center py-12">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Thank You!</h2>
+                    <p class="text-gray-600 mb-8">We appreciate your feedback.</p>
+                    <a href="index.html" class="btn-primary inline-flex items-center px-6 py-3">
+                        Return to Home
+                    </a>
+                </div>
+            `;
+        });
+
+        document.getElementById('skipFeedbackBtn')?.addEventListener('click', function() {
+            // Show thank you message before redirect
+            const formContainer = document.querySelector('.glass-card');
+            formContainer.innerHTML = `
+                <div class="text-center py-12 cursor-pointer" onclick="window.location.href='index.html'">
+                    <svg class="w-20 h-20 mx-auto text-green-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Thank You!</h2>
+                    <p class="text-gray-600 mb-6">We appreciate your time.</p>
+                    <p class="text-sm text-gray-500">Click anywhere to return home</p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
